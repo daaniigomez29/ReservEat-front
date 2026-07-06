@@ -41,18 +41,17 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
   const [values, setValues] = useState<CreateRestaurantPayload>({
     name: initial?.name ?? "",
     email: initial?.email ?? "",
-    phone: initial?.phone ?? "",
+    tlf: initial?.tlf ?? "",
     size: initial?.size ?? 20,
     averagePrice: initial?.averagePrice ?? 25,
     cuisineType: initial?.cuisineType ?? "OTHER",
     dietaryOptions: initial?.dietaryOptions ?? [],
-    location: {
-      address: initial?.location.address ?? "",
-      city: initial?.location.city ?? "",
-      province: initial?.location.province ?? "",
-      postalCode: initial?.location.postalCode ?? "",
-      country: initial?.location.country ?? "España",
-    },
+    street: initial?.location.street ?? "",
+    city: initial?.location.city ?? "",
+    province: initial?.location.province ?? "",
+    postalCode: initial?.location.postalCode ?? "",
+    lat: initial?.location.lat,
+    lon: initial?.location.lon,
   });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -62,16 +61,6 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
     value: CreateRestaurantPayload[K],
   ) {
     setValues((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function updateLocation<K extends keyof CreateRestaurantPayload["location"]>(
-    key: K,
-    value: CreateRestaurantPayload["location"][K],
-  ) {
-    setValues((prev) => ({
-      ...prev,
-      location: { ...prev.location, [key]: value },
-    }));
   }
 
   function toggleDiet(diet: DietaryOption) {
@@ -144,8 +133,8 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
           <input
             type="tel"
             required
-            value={values.phone}
-            onChange={(e) => update("phone", e.target.value)}
+            value={values.tlf}
+            onChange={(e) => update("tlf", e.target.value)}
             className="rounded border border-gray-300 px-2 py-1 text-sm"
           />
         </label>
@@ -214,12 +203,12 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
         </legend>
         <div className="grid grid-cols-1 gap-3 pt-2 md:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm md:col-span-2">
-            <span className="font-medium text-gray-700">Dirección</span>
+            <span className="font-medium text-gray-700">Calle</span>
             <input
               type="text"
               required
-              value={values.location.address}
-              onChange={(e) => updateLocation("address", e.target.value)}
+              value={values.street}
+              onChange={(e) => update("street", e.target.value)}
               className="rounded border border-gray-300 px-2 py-1 text-sm"
             />
           </label>
@@ -228,8 +217,8 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
             <input
               type="text"
               required
-              value={values.location.city}
-              onChange={(e) => updateLocation("city", e.target.value)}
+              value={values.city}
+              onChange={(e) => update("city", e.target.value)}
               className="rounded border border-gray-300 px-2 py-1 text-sm"
             />
           </label>
@@ -238,8 +227,8 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
             <input
               type="text"
               required
-              value={values.location.province}
-              onChange={(e) => updateLocation("province", e.target.value)}
+              value={values.province}
+              onChange={(e) => update("province", e.target.value)}
               className="rounded border border-gray-300 px-2 py-1 text-sm"
             />
           </label>
@@ -247,17 +236,40 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
             <span className="font-medium text-gray-700">Código postal</span>
             <input
               type="text"
-              value={values.location.postalCode ?? ""}
-              onChange={(e) => updateLocation("postalCode", e.target.value)}
+              value={values.postalCode ?? ""}
+              onChange={(e) => update("postalCode", e.target.value)}
               className="rounded border border-gray-300 px-2 py-1 text-sm"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium text-gray-700">País</span>
+            <span className="font-medium text-gray-700">Latitud</span>
             <input
-              type="text"
-              value={values.location.country ?? ""}
-              onChange={(e) => updateLocation("country", e.target.value)}
+              type="number"
+              step="any"
+              required
+              value={values.lat ?? ""}
+              onChange={(e) =>
+                update(
+                  "lat",
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+              className="rounded border border-gray-300 px-2 py-1 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            <span className="font-medium text-gray-700">Longitud</span>
+            <input
+              type="number"
+              step="any"
+              required
+              value={values.lon ?? ""}
+              onChange={(e) =>
+                update(
+                  "lon",
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
               className="rounded border border-gray-300 px-2 py-1 text-sm"
             />
           </label>

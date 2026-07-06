@@ -35,7 +35,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       <p className="text-sm text-gray-600">
         {location.city}, {location.province}
       </p>
-      <p className="text-sm text-gray-500">{location.address}</p>
+      <p className="text-sm text-gray-500">{location.street}</p>
       <div className="flex items-center justify-between pt-2">
         <span className="text-sm font-medium text-gray-800">
           {averagePrice.toFixed(2)} € / persona

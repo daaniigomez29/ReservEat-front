@@ -31,7 +31,7 @@ export default async function RestaurantDetailPage({
             {restaurant.name}
           </h1>
           <p className="text-sm text-gray-600">
-            {restaurant.location.address} {restaurant.location.city}, (
+            {restaurant.location.street} {restaurant.location.city}, (
             {restaurant.location.province})
           </p>
         </header>

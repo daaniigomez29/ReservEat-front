@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { authApi } from "@/lib/api/authApi";
 import { AUTH_COOKIE, AUTH_USER_COOKIE, ApiError } from "@/lib/api/http";
-import type { AuthUser, Role } from "@/lib/types/auth";
+import type { AuthUser, GlobalRolePermission, RestaurantRolePermission } from "@/lib/types/auth";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -28,7 +28,8 @@ export async function POST(request: Request) {
       id: String(raw.userId),
       email: raw.email,
       name: raw.username,
-      roles: [raw.globalRole as Role],
+      globalRole: raw.globalRole as GlobalRolePermission,
+      restaurantRole: raw.restaurantRole as RestaurantRolePermission,
     };
 
     const cookieOptions = {

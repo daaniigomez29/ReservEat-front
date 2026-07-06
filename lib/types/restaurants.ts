@@ -19,13 +19,12 @@ export type DietaryOption =
   | "KOSHER";
 
 export interface Location {
-  address: string;
+  street: string;
   city: string;
   province: string;
   postalCode?: string;
-  country?: string;
-  latitude?: number;
-  longitude?: number;
+  lat?: number;
+  lon?: number;
 }
 
 export interface Restaurant {
@@ -51,7 +50,12 @@ export interface CreateRestaurantPayload {
   averagePrice: number;
   cuisineType: CuisineType;
   dietaryOptions: DietaryOption[];
-  location: Location;
+  street: string;
+  city: string;
+  province: string;
+  postalCode?: string;
+  lat?: number;
+  lon?: number;
 }
 
 export type UpdateRestaurantPayload = Partial<CreateRestaurantPayload>;

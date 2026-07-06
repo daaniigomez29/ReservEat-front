@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { authApi } from "@/lib/api/authApi";
 import { ApiError } from "@/lib/api/http";
-import type { Role } from "@/lib/types/auth";
+import type { GlobalRolePermission } from "@/lib/types/auth";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -11,14 +11,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { email, password, name, username, tlf, role } =
+  const { email, password, name, username, tlf } =
     (body as {
       email?: string;
       password?: string;
       name?: string;
       username?: string;
       tlf?: string;
-      role?: Role;
     }) ?? {};
 
   if (!email || !password || !name || !username || !tlf) {
@@ -38,7 +37,6 @@ export async function POST(request: Request) {
       name,
       username,
       tlf,
-      role,
     });
     return NextResponse.json(result, { status: 201 });
   } catch (err) {

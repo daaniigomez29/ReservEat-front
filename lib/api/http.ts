@@ -4,7 +4,7 @@ export const AUTH_COOKIE = "auth_token";
 export const AUTH_USER_COOKIE = "auth_user";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1";
 
 export class ApiError extends Error {
   status: number;

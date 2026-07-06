@@ -1,10 +1,13 @@
-export type Role = "USER" | "OWNER" | "ADMIN";
+export type GlobalRolePermission = "USER" | "ADMIN";
+
+export type RestaurantRolePermission = "OWNER" | "WORKER";
 
 export interface AuthUser {
   id: string;
   email: string;
   name?: string;
-  roles: Role[];
+  globalRole: GlobalRolePermission;
+  restaurantRole?: RestaurantRolePermission;
   ownedRestaurantIds?: string[];
 }
 
@@ -19,7 +22,7 @@ export interface RegisterPayload {
   name: string;
   username: string;
   tlf: string;
-  role?: Role;
+  role?: GlobalRolePermission;
 }
 
 // El backend NO devuelve token al registrar: exige verificar el email antes.
@@ -38,4 +41,5 @@ export interface BackendLoginResponse {
   email: string;
   username: string;
   globalRole: string;
+  restaurantRole: string;
 }

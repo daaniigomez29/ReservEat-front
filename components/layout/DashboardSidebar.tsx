@@ -14,7 +14,7 @@ export function DashboardSidebar() {
   return (
     <aside className="w-56 shrink-0 border-r border-gray-200 bg-white p-4">
       <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-        Dashboard
+        Panel de control
       </p>
       <nav className="flex flex-col gap-1 text-sm">
         {links.map((link) => {
@@ -25,11 +25,10 @@ export function DashboardSidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded px-2 py-1 ${
-                isActive
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+              className={`rounded px-2 py-1 ${isActive
+                ? "bg-brand-50 text-brand-700"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
             >
               {link.label}
             </Link>

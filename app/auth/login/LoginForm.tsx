@@ -23,11 +23,8 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     setSubmitting(true);
     try {
       const user = await login(email, password);
-      const fallback = user.roles.some((role) =>
-        ["OWNER", "ADMIN"].includes(role),
-      )
-        ? "/dashboard"
-        : "/restaurants";
+      const isPrivileged = user.globalRole === "ADMIN" || user.restaurantRole === "OWNER" || user.restaurantRole === "WORKER";
+      const fallback = isPrivileged ? "/dashboard" : "/restaurants";
       router.push(redirectTo || fallback);
       router.refresh();
     } catch (err) {

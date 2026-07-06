@@ -9,12 +9,13 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import type { AuthUser, Role } from "@/lib/types/auth";
+import type { AuthUser, GlobalRolePermission, RestaurantRolePermission } from "@/lib/types/auth";
 
 interface AuthContextValue {
   user: AuthUser | null;
   isAuthenticated: boolean;
-  hasRole: (...roles: Role[]) => boolean;
+  hasGlobalRole: (...roles: GlobalRolePermission[]) => boolean;
+  hasRestaurantRole: (...roles: RestaurantRolePermission[]) => boolean;
   isOwnerOrAdmin: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
@@ -61,22 +62,31 @@ export function AuthProvider({ initialUser, children }: AuthProviderProps) {
     router.refresh();
   }, [router]);
 
-  const hasRole = useCallback(
-    (...roles: Role[]) =>
-      Boolean(user && roles.some((role) => user.roles.includes(role))),
+  const hasGlobalRole = useCallback(
+    (...roles: GlobalRolePermission[]) =>
+      Boolean(user && roles.some((role) => user.globalRole === role)),
     [user],
   );
+
+  const hasRestaurantRole = useCallback(
+    (...roles: RestaurantRolePermission[]) =>
+      Boolean(user && roles.some((role) => user.restaurantRole === role)),
+    [user],
+  );
+
+  const isOwnerOrAdmin = hasGlobalRole("ADMIN") || hasRestaurantRole("OWNER");
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      hasRole,
-      isOwnerOrAdmin: hasRole("OWNER", "ADMIN"),
+      hasGlobalRole,
+      hasRestaurantRole,
+      isOwnerOrAdmin,
       login,
       logout,
     }),
-    [user, hasRole, login, logout],
+    [user, hasGlobalRole, hasRestaurantRole, isOwnerOrAdmin, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
