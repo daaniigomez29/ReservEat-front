@@ -57,6 +57,16 @@ export default async function RestaurantDetailPage({
             </p>
             <p className="font-medium text-gray-800">{restaurant.size}</p>
           </div>
+          {restaurant.openingTime && restaurant.closingTime && (
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-500">
+                Horario
+              </p>
+              <p className="font-medium text-gray-800">
+                {restaurant.openingTime}–{restaurant.closingTime}
+              </p>
+            </div>
+          )}
           <div className="md:col-span-3">
             <p className="text-xs uppercase tracking-wide text-gray-500">
               Opciones dietéticas
@@ -83,6 +93,8 @@ export default async function RestaurantDetailPage({
           <ReservationForm
             restaurantId={restaurant.id}
             restaurantSize={restaurant.size}
+            openingTime={restaurant.openingTime}
+            closingTime={restaurant.closingTime}
           />
         ) : (
           <div className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">

@@ -7,11 +7,30 @@ import type { CreateReservationPayload } from "@/lib/types/reservations";
 interface ReservationFormProps {
   restaurantId: string;
   restaurantSize?: number;
+  openingTime?: string;
+  closingTime?: string;
+}
+
+/**
+ * Mirrors the backend rule (Restaurant.isWithinOpeningHours): a "HH:mm" string
+ * comparison works because the values are zero-padded 24h times. A closing time
+ * earlier than the opening time denotes a window crossing midnight.
+ */
+function isWithinOpeningHours(
+  time: string,
+  open?: string,
+  close?: string,
+): boolean {
+  if (!open || !close || open === close) return true;
+  if (open < close) return time >= open && time < close;
+  return time >= open || time < close;
 }
 
 export function ReservationForm({
   restaurantId,
   restaurantSize,
+  openingTime,
+  closingTime,
 }: ReservationFormProps) {
   const router = useRouter();
   const [date, setDate] = useState("");
@@ -27,6 +46,13 @@ export function ReservationForm({
     
     if (!date || !time) {
       setError("Selecciona fecha y hora");
+      return;
+    }
+
+    if (!isWithinOpeningHours(time, openingTime, closingTime)) {
+      setError(
+        `El restaurante solo acepta reservas entre las ${openingTime} y las ${closingTime}.`,
+      );
       return;
     }
 
@@ -89,6 +115,11 @@ export function ReservationForm({
             className="rounded border border-gray-300 px-2 py-1 text-sm"
             required
           />
+          {openingTime && closingTime && (
+            <span className="text-xs text-gray-400">
+              Horario: {openingTime}–{closingTime}
+            </span>
+          )}
         </label>
       </div>
       <label className="flex flex-col gap-1 text-sm">

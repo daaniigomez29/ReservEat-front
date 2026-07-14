@@ -38,6 +38,9 @@ export interface Restaurant {
   cuisineType: CuisineType;
   dietaryOptions: DietaryOption[];
   location: Location;
+  /** Opening hours in "HH:mm" (24h); undefined when the owner has not set them. */
+  openingTime?: string;
+  closingTime?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -50,6 +53,8 @@ export interface CreateRestaurantPayload {
   averagePrice: number;
   cuisineType: CuisineType;
   dietaryOptions: DietaryOption[];
+  openingTime?: string;
+  closingTime?: string;
   street: string;
   city: string;
   province: string;

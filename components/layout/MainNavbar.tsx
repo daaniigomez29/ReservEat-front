@@ -14,20 +14,20 @@ export function MainNavbar() {
         </Link>
         <ul className="flex items-center gap-4 text-sm">
           <li>
-            <Link href="/restaurants" className="hover:text-brand-600">
+            <Link href="/restaurants" className="hover:text-brand-600 text-black">
               Restaurantes
             </Link>
           </li>
           {isAuthenticated && (
             <li>
-              <Link href="/reservations/my" className="hover:text-brand-600">
+              <Link href="/reservations/my" className="hover:text-brand-600 text-black">
                 Mis reservas
               </Link>
             </li>
           )}
           {isOwnerOrAdmin && (
             <li>
-              <Link href="/dashboard" className="hover:text-brand-600">
+              <Link href="/dashboard" className="hover:text-brand-600 text-black">
                 Dashboard
               </Link>
             </li>
@@ -40,7 +40,7 @@ export function MainNavbar() {
               <button
                 type="button"
                 onClick={logout}
-                className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-100"
+                className="rounded border border-gray-300 px-3 py-1 text-sm hover:bg-gray-100 text-black"
               >
                 Salir
               </button>

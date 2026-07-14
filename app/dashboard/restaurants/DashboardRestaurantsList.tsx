@@ -94,6 +94,12 @@ export function DashboardRestaurantsList({
                   >
                     Reservas
                   </Link>
+                  <Link
+                    href={`/dashboard/restaurants/${restaurant.id}/floor-plan`}
+                    className="text-brand-600 hover:underline"
+                  >
+                    Plano
+                  </Link>
                   <button
                     type="button"
                     onClick={() =>

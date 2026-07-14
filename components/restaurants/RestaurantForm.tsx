@@ -45,6 +45,8 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
     size: initial?.size ?? 20,
     averagePrice: initial?.averagePrice ?? 25,
     cuisineType: initial?.cuisineType ?? "OTHER",
+    openingTime: initial?.openingTime ?? "",
+    closingTime: initial?.closingTime ?? "",
     dietaryOptions: initial?.dietaryOptions ?? [],
     street: initial?.location.street ?? "",
     city: initial?.location.city ?? "",
@@ -80,10 +82,17 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
       const url =
         mode === "create" ? "/api/restaurants" : `/api/restaurants/${initial?.id}`;
       const method = mode === "create" ? "POST" : "PUT";
+      // Omit empty time fields so the backend receives null, not "" (which
+      // would fail LocalTime parsing).
+      const payload: CreateRestaurantPayload = {
+        ...values,
+        openingTime: values.openingTime || undefined,
+        closingTime: values.closingTime || undefined,
+      };
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
@@ -176,6 +185,28 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
               </option>
             ))}
           </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="font-medium text-gray-700">Hora de apertura</span>
+          <input
+            type="time"
+            value={values.openingTime ?? ""}
+            onChange={(e) => update("openingTime", e.target.value)}
+            className="rounded border border-gray-300 px-2 py-1 text-sm"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="font-medium text-gray-700">Hora de cierre</span>
+          <input
+            type="time"
+            value={values.closingTime ?? ""}
+            onChange={(e) => update("closingTime", e.target.value)}
+            className="rounded border border-gray-300 px-2 py-1 text-sm"
+          />
+          <span className="text-xs text-gray-400">
+            Si el cierre es anterior a la apertura, se entiende que cruza
+            medianoche (p. ej. 19:00–02:00).
+          </span>
         </label>
       </div>
 
