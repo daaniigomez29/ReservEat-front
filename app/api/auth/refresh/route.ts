@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { authApi } from "@/lib/api/authApi";
 import {
@@ -11,26 +12,16 @@ import {
 } from "@/lib/api/http";
 import type { AuthUser, GlobalRolePermission, RestaurantRolePermission } from "@/lib/types/auth";
 
-export async function POST(request: Request) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ message: "Invalid JSON body" }, { status: 400 });
-  }
+export async function POST() {
+  const store = await cookies();
+  const refreshToken = store.get(REFRESH_COOKIE)?.value;
 
-  const { email, password } =
-    (body as { email?: string; password?: string }) ?? {};
-
-  if (!email || !password) {
-    return NextResponse.json(
-      { message: "Email and password are required" },
-      { status: 400 },
-    );
+  if (!refreshToken) {
+    return NextResponse.json({ message: "No refresh token" }, { status: 401 });
   }
 
   try {
-    const raw = await authApi.login({ email, password });
+    const raw = await authApi.refresh(refreshToken);
 
     const user: AuthUser = {
       id: String(raw.userId),
@@ -40,6 +31,7 @@ export async function POST(request: Request) {
       restaurantRole: raw.restaurantRole as RestaurantRolePermission,
     };
 
+    // Rotation: overwrite the whole trio with the freshly issued pair.
     const response = NextResponse.json({ user });
     response.cookies.set(
       AUTH_COOKIE,
@@ -58,14 +50,23 @@ export async function POST(request: Request) {
     );
     return response;
   } catch (err) {
+    // A rejected/expired refresh token means the session is dead: clear the
+    // cookies so the client falls back to logging in again.
+    const status = err instanceof ApiError ? err.status : 401;
     if (err instanceof ApiError) {
-      console.error("[login] Backend error", err.status, err.message, err.body);
-      return NextResponse.json(
-        { message: err.message },
-        { status: err.status },
-      );
+      console.error("[refresh] Backend error", err.status, err.message, err.body);
+    } else {
+      console.error("[refresh] Unexpected error", err);
     }
-    console.error("[login] Unexpected error", err);
-    return NextResponse.json({ message: "Login failed" }, { status: 500 });
+
+    const clear = authCookieOptions(0);
+    const response = NextResponse.json(
+      { message: "Session expired" },
+      { status: status === 200 ? 401 : status },
+    );
+    response.cookies.set(AUTH_COOKIE, "", clear);
+    response.cookies.set(REFRESH_COOKIE, "", clear);
+    response.cookies.set(AUTH_USER_COOKIE, "", clear);
+    return response;
   }
 }

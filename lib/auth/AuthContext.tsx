@@ -53,6 +53,8 @@ export function AuthProvider({ initialUser, children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
+      // No body needed: the route reads the refresh token from the httpOnly
+      // cookie and revokes it server-side.
       await fetch("/api/auth/logout", { method: "POST" });
     } catch {
       // ignore

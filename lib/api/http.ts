@@ -2,6 +2,27 @@ import { cookies } from "next/headers";
 
 export const AUTH_COOKIE = "auth_token";
 export const AUTH_USER_COOKIE = "auth_user";
+export const REFRESH_COOKIE = "refresh_token";
+
+// Cookie lifetimes. The access token JWT only lives ~15 min, but we let its
+// cookie persist as long as the refresh token so a silent refresh can revive
+// the session instead of forcing a re-login. The refresh cookie mirrors the
+// backend's jwt.refresh-expiration (7 days).
+const SEVEN_DAYS_SECONDS = 60 * 60 * 24 * 7;
+export const ACCESS_TOKEN_MAX_AGE = SEVEN_DAYS_SECONDS;
+export const REFRESH_TOKEN_MAX_AGE = SEVEN_DAYS_SECONDS;
+
+// Shared options for every auth cookie: httpOnly (invisible to JS, so XSS can't
+// steal the tokens), secure in production, and lax same-site.
+export function authCookieOptions(maxAge: number) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge,
+  };
+}
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1";

@@ -3,6 +3,7 @@ import type {
   AuthUser,
   BackendLoginResponse,
   LoginCredentials,
+  LogoutRequest,
   RegisterPayload,
   RegisterResponse,
 } from "@/lib/types/auth";
@@ -20,11 +21,13 @@ export const authApi = {
     return http.get<AuthUser>("/auth/me", { token });
   },
 
-  async logout(): Promise<void> {
-    try {
-      await http.post<void>("/auth/logout");
-    } catch {
-      // Backend logout is best-effort; client clears its own session.
-    }
+  async logout(request: LogoutRequest): Promise<void> {
+    return http.post<void>("/auth/logout", request);
+  },
+
+  async refresh(refreshToken: string): Promise<BackendLoginResponse> {
+    // The backend rotates: it returns a brand-new access + refresh pair and
+    // invalidates the one we send here.
+    return http.post<BackendLoginResponse>("/auth/refresh", { refreshToken });
   },
 };

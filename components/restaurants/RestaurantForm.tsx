@@ -75,6 +75,7 @@ export function RestaurantForm({ mode, initial }: RestaurantFormProps) {
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    console.log(values)
     event.preventDefault();
     setError(null);
     setSubmitting(true);

@@ -16,6 +16,10 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface LogoutRequest {
+  refreshToken: string;
+}
+
 export interface RegisterPayload {
   email: string;
   password: string;
